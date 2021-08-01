@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class Assign4 {
     private static Random random = new Random();
@@ -130,11 +131,36 @@ public class Assign4 {
                 System.out.println(arr[i]);
             }
             System.out.println("------------------------------");
-            System.out.println(algorithm + " Spent " + duration + "ms for sorting array with size of " + size + ", Array Type:" + type);
+            System.out.println(algorithm + " Spent " + convertTime(duration) + " for sorting array with size of " + size + ", Array Type:" + type);
 
         }
     }
 
+    private static String convertTime(long millis) {
+        long days = TimeUnit.MILLISECONDS.toDays(millis);
+        millis -= TimeUnit.DAYS.toMillis(days);
+        long hours = TimeUnit.MILLISECONDS.toHours(millis);
+        millis -= TimeUnit.HOURS.toMillis(hours);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+        millis -= TimeUnit.MINUTES.toMillis(minutes);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+        millis -= TimeUnit.SECONDS.toMillis(seconds);
+
+        StringBuilder sb = new StringBuilder(64);
+        sb.append(days);
+        sb.append(" Days ");
+        sb.append(hours);
+        sb.append(" Hours ");
+        sb.append(minutes);
+        sb.append(" Minutes ");
+        sb.append(seconds);
+        sb.append(" Seconds ");
+        sb.append(millis);
+        sb.append(" Millis ");
+
+
+        return (sb.toString());
+    }
 
     private static Long[] createArray(int size, ArrayType type) {
         switch (type) {

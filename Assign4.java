@@ -1,4 +1,3 @@
-package com.company;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;

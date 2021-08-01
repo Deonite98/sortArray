@@ -1,127 +1,178 @@
-import java.util.Arrays;
+package com.company;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Random;
+import java.util.Scanner;
 
 public class Assign4 {
-	
+    private static Random random = new Random();
+    private static Scanner input = new Scanner(System.in);
 
-	public static void main(String[] args)
-	{
-		
-		int size = 11;
-		Number arr[] = new Number[size];
+    private enum ArrayType {
+        IN_ORDER(1),
+        RANDOM(2),
+        REVERSE_ORDER(3);
+
+        int value;
+
+        ArrayType(int value) {
+            this.value = value;
+        }
+
+        public static ArrayType of(int value) {
+            switch (value) {
+                case 1:
+                    return ArrayType.IN_ORDER;
+                case 2:
+                    return ArrayType.RANDOM;
+                case 3:
+                    return ArrayType.REVERSE_ORDER;
+                default:
+                    return null;
+            }
+        }
+    }
+
+    private enum Algorithm {
+        QUICK_SORT(1),
+        MERGE_SORT(2),
+        SELECTION_SORT(3),
+        INSERTION_SORT(4);
+        int value;
+
+        Algorithm(int value) {
+            this.value = value;
+        }
+
+        public static Algorithm of(int value) {
+            switch (value) {
+                case 1:
+                    return Algorithm.QUICK_SORT;
+                case 2:
+                    return Algorithm.MERGE_SORT;
+                case 3:
+                    return Algorithm.SELECTION_SORT;
+                case 4:
+                    return Algorithm.INSERTION_SORT;
+                default:
+                    return null;
+            }
+        }
+    }
+
+
+    public static void main(String[] args) {
+        int size = 0;
+        int arrayType = 0;
+
+        System.out.println("Input size of Arrays: ");
+        size = input.nextInt();
+        System.out.println("Input ArrayTYpe");
+        System.out.println("InOrder: 1");
+        System.out.println("Random: 2");
+        System.out.println("Reverse Order: 3");
+        Long arr[] = new Long[size];
+        arrayType = input.nextInt();
+        switch (arrayType) {
+            case 1:
+                arr = createArray(size, ArrayType.IN_ORDER);
+                break;
+            case 2:
+                arr = createArray(size, ArrayType.RANDOM);
+                break;
+            case 3:
+                arr = createArray(size, ArrayType.REVERSE_ORDER);
+                break;
+        }
+        System.out.println("--------Before Sort----------");
         for (int i = 0; i < size; i++) {
-            arr[i] = (int) (Math.random() * 1000);
+            System.out.println(arr[i]);
         }
-        
-        System.out.println("Array length = " + size);
-        //Random Array
-        for (int count = 10; count > 0; count = count - 5)
-		{
-			System.out.println(count + " items in array.");
-			
-         testSort(1, false, "selection sort", count, arr);
-         testSort(2, false, "insertion sort", count, arr);
-         testSort(3, false, "merge sort", count, arr);
-         
-		}
-        
-        //Array already sorted
-        Arrays.sort(arr);
-        for (int count = 10; count > 0; count = count - 5)
-		{
-			System.out.println(count + " items in array.");
-			
-         testSort(1, false, "selection sort", count, arr);
-         testSort(2, false, "insertion sort", count, arr);
-         testSort(3, false, "merge sort", count, arr);
-         
-		}
+        System.out.println("------------------------------");
+        System.out.println("Choose Algorithm:");
+        System.out.println("Quick Sort: 1");
+        System.out.println("Merge Sort: 2");
+        System.out.println("Selection Sort: 3");
+        System.out.println("Insertion Sort: 4");
+        int algorithm = input.nextInt();
 
-        //Array with reverse order
-        for (int i = 0; i <= arr.length / 2; i++) {
-            int t = (int) arr[i];
-            arr[i] = arr[size - i - 1];
-            arr[size - i - 1] = t;
+        analyzeAlgorithm(arr, size, ArrayType.of(arrayType), Algorithm.of(algorithm));
+
+
+    }
+
+    private static void analyzeAlgorithm(Long arr[], int size, ArrayType type, Algorithm algorithm) {
+        long start = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli();
+        try {
+            switch (algorithm) {
+                case MERGE_SORT:
+                    SortArray.iterativeMergeSort(arr, size);
+                    break;
+                case SELECTION_SORT:
+                    SortArray.selectionSort(arr, size);
+                    break;
+                case QUICK_SORT:
+                    /* TODO */
+                    System.out.println("Algorithm NOT Supported!!!!!");
+                    break;
+                case INSERTION_SORT:
+                    SortArray.insertionSort(arr, size);
+                    break;
+            }
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            long duration = LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli() - start;
+            System.out.println("--------After Sort------------");
+            for (int i = 0; i < size; i++) {
+                System.out.println(arr[i]);
+            }
+            System.out.println("------------------------------");
+            System.out.println(algorithm + " Spent " + duration + "ms for sorting array with size of " + size + ", Array Type:" + type);
+
         }
-        for (int count = 11; count > 0; count = count - 5)
-		{
-			System.out.println(count + " items in array.");
-			
-         testSort(1, false, "selection sort", count, arr);
-         testSort(2, false, "insertion sort", count, arr);
-         testSort(3, false, "merge sort", count, arr);
-         
-		}
-        
-        
-        
-        
-        
-	}
-	
-	public static void testSort(int sort, boolean print, String name, int n, Number arr[])
-	{
-		
-		System.out.println("\nTesting " + name + ":");
+    }
 
-		Number[] array = new Number[10];
-      	copyArray(array, arr);
-      	System.out.println("\nBefore sort:");
-      	display(array, n);
 
-		if (print)
-		{
-			System.out.println("\nBefore sort:");
-			display(array, n);
-		} // end if
-		
-		switch (sort)
-		{
-         case 1: SortArray.selectionSort(array, n); break;
-         case 2: SortArray.insertionSort(array, n); break;
-         case 3: SortArray.iterativeMergeSort(array, n); break;
-         
-		} // end switch
-		
-		if (print)
-		{
-			System.out.println("After sort:");
-			display(array, n);
-		} // end if
-		
-		check(array, n);
-	} 
-	
-	public static void display(Object[] array, int n)
-	{
-		for (int index = 0; index < n; index++)
-			System.out.println(array[index]);
-		System.out.println();
-	} // end display
+    private static Long[] createArray(int size, ArrayType type) {
+        switch (type) {
+            case RANDOM:
+                return createRandomArray(size);
+            case IN_ORDER:
+                return createInOrderArray(size);
+            case REVERSE_ORDER:
+                return createReverseOderArray(size);
+            default:
+                return null;
+        }
+    }
 
-	public static void copyArray(Object[] copy, Object[] array)
-	{
-		for (int index = 0; index < array.length; index++)
-			copy[index] = (int)array[index];
-	} // end copyArray
-	
-	public static void check(Number[] array, int n)
-	{
-		if (isSorted(array, n))
-			System.out.println("Method works.\n");
-		else
-			System.out.println("Method DOES NOT work!!!!!!!!!!!!!!!!!!!!!!!!\n");		
-	} // end check
-	
-	public static boolean isSorted(Number[] array, int n)
-	{
-		boolean sorted = true;
-		for (int index = 0; sorted && (index < n - 1); index++)
-		{
-			if (array[index].compareTo(array[index + 1]) > 0)
-				sorted = false;
-		} // end for
-		
-		return sorted;
-	}
+    private static Long[] createRandomArray(int size) {
+        Long items[] = new Long[size];
+        for (int i = 0; i < size; i++) {
+            items[i] = (long) random.nextInt(10000000);
+        }
+        return items;
+    }
+
+    private static Long[] createInOrderArray(int size) {
+        Long items[] = new Long[size];
+        for (int i = 0; i < size; i++) {
+            items[i] = (long) i;
+        }
+        return items;
+    }
+
+    private static Long[] createReverseOderArray(int size) {
+        Long items[] = new Long[size];
+        int max = size;
+        for (int i = 0; i < size; i++) {
+            items[i] = (long) max;
+            max--;
+        }
+        return items;
+    }
+
 }
